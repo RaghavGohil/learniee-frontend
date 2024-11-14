@@ -16,25 +16,25 @@ function Login({ onLogin }) {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
-      <div className="bg-white p-6 rounded shadow-md w-80">
+    <div className="flex items-center justify-center min-h-screen bg-[#151617]">
+      <div className="bg-[#1c1d1f] p-6 text-slate-100 rounded shadow-md w-80">
         <h2 className="text-2xl font-bold mb-6 text-center">Login</h2>
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
-            <label className="block text-gray-700">Email</label>
+            <label className="block ">Email</label>
             <input
               type="email"
-              className="w-full border p-2 rounded mt-1 focus:outline-none focus:ring-2 focus:ring-green-500"
+              className="w-full bg-[#151617] border-hidden p-2 rounded mt-1 focus:outline-none focus:ring-2 focus:ring-[#487db5]"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
             />
           </div>
           <div className="mb-4">
-            <label className="block text-gray-700">Password</label>
+            <label className="block">Password</label>
             <input
               type="password"
-              className="w-full border p-2 rounded mt-1 focus:outline-none focus:ring-2 focus:ring-green-500"
+              className="w-full bg-[#151617] border-hidden p-2 rounded mt-1 ring-[#425569] focus:outline-none focus:ring-2 focus:ring-[#487db5]"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
@@ -42,13 +42,13 @@ function Login({ onLogin }) {
           </div>
           <button
             type="submit"
-            className="w-full bg-green-500 text-white p-2 rounded hover:bg-green-600"
+            className="w-full bg-[#30353b] text-white p-2 rounded hover:bg-[#2b2e30]"
           >
             Login
           </button>
         </form>
         <p className="mt-4 text-center text-gray-600">
-          Don't have an account? <Link to="/signup" className="text-green-500">Sign up</Link>
+          Don't have an account? <Link to="/signup" className=" underline text-[#487db5]">Sign up</Link>
         </p>
       </div>
     </div>
