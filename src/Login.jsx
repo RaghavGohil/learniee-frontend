@@ -1,26 +1,17 @@
-// src/components/Login.jsx
-
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom' 
-import axios from 'axios'
+import React, { useState, useContext } from 'react';
+import { Link, useNavigate } from 'react-router-dom' 
+import { AuthContext } from './AuthContext';
 
 function Login({ onLogin }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-    const navigate = useNavigate()
+  const {login} = useContext(AuthContext)
+  const navigate = useNavigate()
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    axios.post(import.meta.env.VITE_APP_SERVER+'/api/auth/login',{
-       'email':email,
-       'password':password,
-    })
-    .then(res=>{
-        console.log(res.data)
-        navigate('/chats',{ replace: true}) // navigate to login
-    })
-    .catch(err=>{
-        console.log('Unable to log in account: ', err)
+    await login(email,password,()=>{
+        navigate('/chats',{ replace: true}) // navigate to chats when logged in 
     })
   };
 
@@ -57,7 +48,7 @@ function Login({ onLogin }) {
           </button>
         </form>
         <p className="mt-4 text-center text-gray-600">
-          Don't have an account? <a href="/signup" className="text-green-500">Sign up</a>
+          Don't have an account? <Link to="/signup" className="text-green-500">Sign up</Link>
         </p>
       </div>
     </div>

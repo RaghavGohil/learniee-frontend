@@ -1,28 +1,19 @@
-import React, { useState } from 'react';
-import {useNavigate} from 'react-router-dom'
-import axios from 'axios' 
+import React, { useState, useContext } from 'react';
+import {Link, useNavigate} from 'react-router-dom'
+import { AuthContext } from './AuthContext';
 
 function Signup({ onSignup }) {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate() 
+  const {signup} = useContext(AuthContext)
 
   const handleSubmit = (e) => {
         e.preventDefault();
-        
-        axios.post(import.meta.env.VITE_APP_SERVER+'/api/auth/signup',{
-            'username':username,
-            'email':email,
-            'password':password,
-        })
-        .then(res=>{
-            console.log(res.data)
-            navigate('/',{ replace: true}) // navigate to login
-        })
-        .catch(err=>{
-            console.log('Unable to create an account: ', err)
-        })
+        signup(username,email,password,()=>{
+            navigate('/',{ replace: true}) // navigate to chats when logged in 
+        }) 
   };
 
   return (
@@ -68,7 +59,7 @@ function Signup({ onSignup }) {
           </button>
         </form>
         <p className="mt-4 text-center text-gray-600">
-          Already have an account? <a href="/" className="text-green-500">Log in</a>
+          Already have an account? <Link to="/" className="text-green-500">Log in</Link>
         </p>
       </div>
     </div>
