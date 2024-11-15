@@ -28,7 +28,7 @@ function Sidebar({ setActiveChat }) {
   }, []);
 
   return (
-    <div className="w-1/3 bg-[#1c1d1f] border-r border-[#30353b]">
+    <div className="w-1/3 h-screen flex flex-col bg-[#1c1d1f] border-r border-[#30353b]">
       <header className="bg-[#30353b] p-4 text-lg font-bold text-white flex justify-between items-center">
         Learniee Chat App
         <button 
@@ -38,24 +38,26 @@ function Sidebar({ setActiveChat }) {
           Logout
         </button>
       </header>
-      <ul className="divide-y divide-[#30353b]">
-        {chats.map((chat) => (
-          <li 
-            key={chat.id} 
-            onClick={() => setActiveChat(chat)} 
-            className="cursor-pointer p-4 hover:bg-[#2b2e30] border-b border-transparent transition-colors duration-200"
-          >
-            <div className="flex items-center space-x-2">
-              <span 
-                className={`inline-block w-3 h-3 rounded-full ${chat.online ? 'bg-green-500' : 'bg-gray-500'}`} 
-                aria-label={chat.online ? 'Online' : 'Offline'}
-              ></span>
-              <span className="font-semibold text-white">{chat.name}</span>
-            </div>
-            <div className="text-sm text-gray-400">{chat.lastMessage}</div>
-          </li>
-        ))}
-      </ul>
+      <div className="flex-1 overflow-y-auto custom-scrollbar">
+        <ul className="divide-y divide-[#30353b]">
+          {chats.map((chat) => (
+            <li 
+              key={chat.id} 
+              onClick={() => setActiveChat(chat)} 
+              className="cursor-pointer p-4 hover:bg-[#2b2e30] border-b border-transparent transition-colors duration-200"
+            >
+              <div className="flex items-center space-x-2">
+                <span 
+                  className={`inline-block w-3 h-3 rounded-full ${chat.online ? 'bg-green-500' : 'bg-gray-500'}`} 
+                  aria-label={chat.online ? 'Online' : 'Offline'}
+                ></span>
+                <span className="font-semibold text-white">{chat.name}</span>
+              </div>
+              <div className="text-sm text-gray-400">{chat.lastMessage}</div>
+            </li>
+          ))}
+        </ul>
+      </div>
     </div>
   );
 }
