@@ -1,18 +1,14 @@
 import { createContext, useState, useEffect } from 'react';
 import axios from 'axios';
 
-export const AuthContext = createContext();
+export const AuthContext = createContext()
 
 export const AuthProvider = ({ children }) => {
-    const [csrfToken , setCsrfToken] = useState(null);
+
+    const [csrfToken , setCsrfToken] = useState(null)
+    const [userData, setUserData] = useState(null)
 
     useEffect(() => {
-        // Optional: Load token from localStorage or cookie on app start
-        //const savedToken = localStorage.getItem('authToken');
-        //if (savedToken) {
-        //    setAuthToken(savedToken);
-        //    setIsAuthenticated(true);
-        //}
     }, []);
 
     const signup = async (username, email, password, callback) => {
@@ -36,7 +32,11 @@ export const AuthProvider = ({ children }) => {
             },{
                withCredentials: true 
             })
-            localStorage.setItem('username',res.data.tokenData.username) // change later
+            setUserData({
+                id: res.data.tokenData.id,
+                username: res.data.tokenData.username,
+                email: res.data.tokenData.email,
+            })
             setCsrfToken(res.data.tokenData.csrfToken) // for now store this in local storage (use global context)
             callback() // do anything here after login
         }catch(err){
@@ -44,14 +44,14 @@ export const AuthProvider = ({ children }) => {
         } 
     };
 
-    const logout = () => {
-        // Clear token and authentication status
-        setAuthToken(null);
-        setCsrfToken(null);
+    const logout = (callback) => {
+        setUserData(null)
+        setCsrfToken(null)
+        callback()
     };
 
     return (
-        <AuthContext.Provider value={{ csrfToken, signup, login, logout }}>
+        <AuthContext.Provider value={{ csrfToken, userData, signup, login, logout }}>
             {children}
         </AuthContext.Provider>
     );

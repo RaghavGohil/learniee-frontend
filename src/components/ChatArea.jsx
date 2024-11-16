@@ -1,33 +1,45 @@
-import { useState } from 'react';
+import { useState, useEffect, useContext } from 'react'
+import { AuthContext } from '../AuthContext'
+import { ChatContext } from '../ChatContext'
 
-function ChatArea({ chat }) {
-  const [messages, setMessages] = useState([
-    { text: 'Hello!', sender: 'John Doe' },
-    { text: 'Hi there!', sender: 'You' },
-  ]);
-  const [input, setInput] = useState('');
+function ChatArea() {
 
-  const sendMessage = () => {
-    if (input.trim()) {
-      setMessages([...messages, { text: input, sender: 'You' }]);
-      setInput('');
+  const [input, setInput] = useState('')
+  const { userData } = useContext(AuthContext)
+  const { messages, initializeChat, selectedChat, sendMessage } = useContext(ChatContext)
+
+
+  const handleSendMessage = () => {
+    if(input) {
+      sendMessage(input)
+      setInput('')
     }
-  };
+  }
+  
+  useEffect(()=>{
+      if(selectedChat) // initialize the chat only if a chat is selected
+        initializeChat()
+  },[selectedChat])
+
+  if(!selectedChat)
+  {
+    return(<div className="flex-1 flex items-center bg-[#1c1d1f] justify-center text-gray-400">Select a chat to start messaging</div>)
+  }
 
   return (
     <div className="flex-1 flex flex-col bg-[#1c1d1f] text-white">
       <header className="bg-[#2b2e30] p-4 text-lg font-bold">
-        {chat.name}
+        {selectedChat.name}
       </header>
       <div className="flex-1 overflow-y-auto p-4 custom-scrollbar">
         {messages.map((msg, index) => (
-          <div key={index} className={`mb-2 ${msg.sender === 'You' ? 'text-right' : ''}`}>
+          <div key={index} className={`mb-2 ${msg.senderId === userData.id ? 'text-right' : ''}`}>
             <span
               className={`inline-block p-2 rounded ${
-                msg.sender === 'You' ? 'bg-[#487db5] text-white' : 'bg-[#2b2e30] text-gray-300'
+                msg.senderId === userData.id ? 'bg-[#487db5] text-white' : 'bg-[#2b2e30] text-gray-300'
               }`}
             >
-              {msg.text}
+              {msg.content}
             </span>
           </div>
         ))}
@@ -39,15 +51,15 @@ function ChatArea({ chat }) {
           placeholder="Type a message"
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          onKeyDown={(e) => (e.key === 'Enter' ? sendMessage() : null)}
+          onKeyDown={(e) => (e.key === 'Enter' ? handleSendMessage() : null)}
         />
-        <button onClick={sendMessage} className="bg-[#30353b] text-white ml-2 p-2 rounded hover:bg-[#2b2e30]">
+        <button onClick={handleSendMessage} className="bg-[#30353b] text-white ml-2 p-2 rounded hover:bg-[#2b2e30]">
           Send
         </button>
       </footer>
     </div>
-  );
+  )
 }
 
-export default ChatArea;
+export default ChatArea
 

@@ -1,5 +1,4 @@
-import { createContext } from 'react'
-import Chats from './Chats'
+import Chat from './Chat'
 import Login from './Login'
 import ProtectedRoute from './ProtectedRoute'
 import Signup from './Signup'
@@ -13,7 +12,9 @@ function App() {
                     <Route exact path='/' element={<Login />} />
                     <Route path='/signup' element={<Signup />} />
                     <Route path='/chats' element={
-                        <ProtectedRoute><Chats/></ProtectedRoute>
+                        <ProtectedRoute>
+                            <Chat/>
+                        </ProtectedRoute>
                     }/>
                 </Routes>
             </BrowserRouter>

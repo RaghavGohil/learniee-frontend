@@ -1,38 +1,30 @@
-import { useState, useEffect, useContext } from 'react';
-import axios from 'axios';
+import { useEffect, useContext } from 'react';
 import { AuthContext } from '../AuthContext';
+import { SocketContext } from '../SocketContext';
+import { ChatContext } from '../ChatContext';
+import { useNavigate } from 'react-router-dom';
 
-function Sidebar({ setActiveChat }) {
-  const [chats, setChats] = useState([]);
-  const { logout } = useContext(AuthContext);
+function Sidebar() {
+  const { logout, userData} = useContext(AuthContext)
+  const {socket} = useContext(SocketContext)
+  const {chatList, setSelectedChat} = useContext(ChatContext)
+  const navigate = useNavigate()
+
+  const handleLogout = () => {
+    logout(()=>{
+        navigate('/',{ replace: true}) // navigate to login 
+    }) 
+  }
 
   useEffect(() => {
-    // Get the chat list
-    axios({
-      url: import.meta.env.VITE_APP_SERVER + '/api/users',
-      method: "GET",
-    })
-      .then((res) => {
-        const newList = res.data.map(user => ({
-          id: user._id,
-          name: user.username,
-          online: user.online,
-          lastMessage: user.lastMessage || 'No messages yet'
-        }));
-
-        setChats(newList);
-      })
-      .catch((err) => {
-        console.log('Unable to fetch chat list: ', err);
-      });
-  }, []);
+      }, []);
 
   return (
     <div className="w-1/3 h-screen flex flex-col bg-[#1c1d1f] border-r border-[#30353b]">
       <header className="bg-[#30353b] p-4 text-lg font-bold text-white flex justify-between items-center">
-        Learniee Chat App
+        Hello, {userData.username}
         <button 
-          onClick={logout} 
+          onClick={handleLogout} 
           className="text-sm text-[#487db5] hover:underline focus:outline-none"
         >
           Logout
@@ -40,15 +32,15 @@ function Sidebar({ setActiveChat }) {
       </header>
       <div className="flex-1 overflow-y-auto custom-scrollbar">
         <ul className="divide-y divide-[#30353b]">
-          {chats.map((chat) => (
+          {chatList.map((chat) => (
             <li 
-              key={chat.id} 
-              onClick={() => setActiveChat(chat)} 
+              key={chat.userId} 
+              onClick={() => {setSelectedChat(chat)}} 
               className="cursor-pointer p-4 hover:bg-[#2b2e30] border-b border-transparent transition-colors duration-200"
             >
               <div className="flex items-center space-x-2">
                 <span 
-                  className={`inline-block w-3 h-3 rounded-full ${chat.online ? 'bg-green-500' : 'bg-gray-500'}`} 
+                  className={`inline-block w-3 h-3 rounded-full ${chat.online ? 'bg-green-500' : 'bg-red-500'}`} 
                   aria-label={chat.online ? 'Online' : 'Offline'}
                 ></span>
                 <span className="font-semibold text-white">{chat.name}</span>

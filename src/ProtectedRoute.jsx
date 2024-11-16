@@ -6,7 +6,6 @@ import axios from 'axios';
 const ProtectedPage = ({ children }) => {
     const { csrfToken } = useContext(AuthContext);
     const [authorize, setAuthorize] = useState(null);
-
     useEffect(() => {
         const verifyAuth = async () => {
             try {
