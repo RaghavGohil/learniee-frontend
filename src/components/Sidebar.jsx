@@ -42,7 +42,6 @@ function Sidebar() {
                 ></span>
                 <span className="font-semibold text-white">{chat.name}</span>
               </div>
-              <div className="text-sm text-gray-400">{"No messages yet."}</div>
             </li>
           ))}
         </ul>

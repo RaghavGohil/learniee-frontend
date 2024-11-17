@@ -47,6 +47,7 @@ function ChatArea() {
       <div className="flex-1 overflow-y-auto p-4 custom-scrollbar">
         {messages.map((msg, index) => (
           <div key={index} className={`mb-2 ${msg.senderId === userData.id ? 'text-right' : ''}`}>
+            <div className="text-xs">{new Date(msg.createdAt).toLocaleString()}</div>
             <span
               className={`inline-block p-2 rounded ${
                 msg.senderId === userData.id ? 'bg-[#487db5] text-white' : 'bg-[#2b2e30] text-gray-300'
