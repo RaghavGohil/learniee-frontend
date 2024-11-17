@@ -24,8 +24,6 @@ export const ChatProvider = ({ children }) => {
                 .map(user => ({
                     userId: user._id,
                     name: user.username,
-                    online: user.online,
-                    lastMessage: user.lastMessage || 'No messages yet'
                 }))
             setChatList(newChatList)
         }catch(err){
@@ -41,8 +39,7 @@ export const ChatProvider = ({ children }) => {
         })
         const id = res.data._id // get the chat id
         res = await axios.get(import.meta.env.VITE_APP_SERVER+`/api/messages/${id}`)
-        console.log(messages)
-        setMessages((messages)=>res.data.messages)
+        setMessages(res.data.messages)
         setChatId(id) // use this chat id for further interactions
     }
 
@@ -59,7 +56,7 @@ export const ChatProvider = ({ children }) => {
     }
 
     return (
-        <ChatContext.Provider value={{ chatList, sendMessage, selectedChat, setSelectedChat, initializeChat, messages }}>
+        <ChatContext.Provider value={{ chatId, chatList, sendMessage, selectedChat, setSelectedChat, initializeChat, messages }}>
             {children}
         </ChatContext.Provider>
     );

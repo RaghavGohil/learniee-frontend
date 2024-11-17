@@ -7,14 +7,14 @@ import {ChatProvider} from './ChatContext'
 function Chat() {
 
   return (
+    <ChatProvider>
       <SocketProvider>
-        <ChatProvider>
             <div className="flex h-screen bg-gray-200">
               <Sidebar/>
               <ChatArea/>
             </div>
-        </ChatProvider>
       </SocketProvider>
+    </ChatProvider>
   );
 }
 

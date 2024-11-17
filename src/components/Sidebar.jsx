@@ -1,4 +1,4 @@
-import { useEffect, useContext } from 'react';
+import { useContext } from 'react';
 import { AuthContext } from '../AuthContext';
 import { SocketContext } from '../SocketContext';
 import { ChatContext } from '../ChatContext';
@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 
 function Sidebar() {
   const { logout, userData} = useContext(AuthContext)
-  const {socket} = useContext(SocketContext)
+  const { onlineUsers } = useContext(SocketContext)
   const {chatList, setSelectedChat} = useContext(ChatContext)
   const navigate = useNavigate()
 
@@ -15,9 +15,6 @@ function Sidebar() {
         navigate('/',{ replace: true}) // navigate to login 
     }) 
   }
-
-  useEffect(() => {
-      }, []);
 
   return (
     <div className="w-1/3 h-screen flex flex-col bg-[#1c1d1f] border-r border-[#30353b]">
@@ -40,12 +37,12 @@ function Sidebar() {
             >
               <div className="flex items-center space-x-2">
                 <span 
-                  className={`inline-block w-3 h-3 rounded-full ${chat.online ? 'bg-green-500' : 'bg-red-500'}`} 
-                  aria-label={chat.online ? 'Online' : 'Offline'}
+                  className={`inline-block w-3 h-3 rounded-full ${onlineUsers.includes(chat.userId,0)? 'bg-green-500' : 'bg-red-500'}`} 
+                  aria-label={onlineUsers.includes(chat.userId,) ? 'Online' : 'Offline'}
                 ></span>
                 <span className="font-semibold text-white">{chat.name}</span>
               </div>
-              <div className="text-sm text-gray-400">{chat.lastMessage}</div>
+              <div className="text-sm text-gray-400">{"No messages yet."}</div>
             </li>
           ))}
         </ul>

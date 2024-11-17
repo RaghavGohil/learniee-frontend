@@ -1,12 +1,15 @@
-import { useState, useEffect, useContext } from 'react'
+import { useState, useEffect, useContext, useRef } from 'react'
 import { AuthContext } from '../AuthContext'
 import { ChatContext } from '../ChatContext'
+import { SocketContext } from '../SocketContext'
 
 function ChatArea() {
 
   const [input, setInput] = useState('')
   const { userData } = useContext(AuthContext)
-  const { messages, initializeChat, selectedChat, sendMessage } = useContext(ChatContext)
+  const { messages, initializeChat, chatId, selectedChat, sendMessage } = useContext(ChatContext)
+  const { joinChatRoom } = useContext(SocketContext)
+  const scrollRef = useRef(null)
 
 
   const handleSendMessage = () => {
@@ -17,9 +20,16 @@ function ChatArea() {
   }
   
   useEffect(()=>{
-      if(selectedChat) // initialize the chat only if a chat is selected
-        initializeChat()
+      if(selectedChat){// initialize the chat if a new chat is selected and join the room
+          initializeChat()
+          joinChatRoom(chatId)
+          scrollRef.current?.scrollIntoView() // also scroll to bottom
+      }   
   },[selectedChat])
+
+  useEffect(()=>{ // auto scroll whenever the messages is updated
+      scrollRef.current?.scrollIntoView()
+  },[messages])
 
   if(!selectedChat)
   {
@@ -43,6 +53,7 @@ function ChatArea() {
             </span>
           </div>
         ))}
+      <div ref={scrollRef}></div>
       </div>
       <footer className="p-4 border-t border-slate-700 flex">
         <input

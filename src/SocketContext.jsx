@@ -6,30 +6,47 @@ export const SocketContext = createContext()
 
 export const SocketProvider = ({children}) => {
 
+    const [onlineUsers, setOnlineUsers] = useState([])
     const [socket, setSocket] = useState(null)
-    const [onlineUsers, setOnlineUsers] = useState(null)
     const { userData } = useContext(AuthContext)
 
     useEffect(()=>{
         const socketInstance = io(import.meta.env.VITE_APP_SERVER)
-        setSocket(socketInstance) // create a new socket instance
+        setSocket(socketInstance)
 
-        socketInstance.on('user_status', (data) => {
-            setOnlineUsers((prevState) => {
-            if (data.online) {
-                return [...prevState, { userid: data.userid, online: data.online }];
-            } else {
-                return prevState.filter(user => user.id !== data.id);
-            }
-        })})
+        // handle online status
+        socketInstance.emit('online',userData.id)
 
-        return ()=>{
+        socketInstance.on('onlineUsers', (users) => {
+          setOnlineUsers(users)
+        })
+
+        socketInstance.on('userOnline', (userId) => {
+          setOnlineUsers((prev) => [...prev, userId])
+        })
+
+        socketInstance.on('userOffline', (userId) => {
+          setOnlineUsers((prev) => prev.filter((id) => id !== userId))
+        })
+        
+        return ()=>{ //clean
+            socketInstance.off('onlineUsers')
+            socketInstance.off('userOnline')
+            socketInstance.off('userOffline')
             socketInstance.disconnect()
         }
     },[])
 
+    const joinChatRoom = (chatId) =>{
+        try{
+            socket.emit('join_chat', chatId)
+        }catch(err){
+            console.log('Please set a valid chatId for socket connection!',err)
+        }
+    }
+
     return(
-        <SocketContext.Provider value={{socket, onlineUsers}}>
+        <SocketContext.Provider value={{onlineUsers, joinChatRoom }}>
             {children}
         </SocketContext.Provider>
     )
