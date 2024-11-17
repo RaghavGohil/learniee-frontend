@@ -8,22 +8,25 @@ function ChatArea() {
   const [input, setInput] = useState('')
   const { userData } = useContext(AuthContext)
   const { messages, initializeChat, chatId, selectedChat, sendMessage } = useContext(ChatContext)
-  const { joinChatRoom } = useContext(SocketContext)
+  const { joinChatRoom, sendMessageWithSocket } = useContext(SocketContext)
   const scrollRef = useRef(null)
 
 
   const handleSendMessage = () => {
     if(input) {
-      sendMessage(input)
+      sendMessageWithSocket(chatId.current, input)
       setInput('')
     }
   }
   
   useEffect(()=>{
-      if(selectedChat){// initialize the chat if a new chat is selected and join the room
-          initializeChat()
-          joinChatRoom(chatId)
+      const initialize = async () => {
+          await initializeChat()
+          joinChatRoom(chatId.current)
           scrollRef.current?.scrollIntoView() // also scroll to bottom
+      }
+      if(selectedChat){// initialize the chat if a new chat is selected and join the room
+          initialize()
       }   
   },[selectedChat])
 

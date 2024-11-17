@@ -1,6 +1,7 @@
-import { createContext, useState, useEffect, useContext } from 'react'
+import { createContext, useRef, useState, useEffect, useContext } from 'react'
 import axios from 'axios'
 import {AuthContext} from './AuthContext'
+import {SocketContext} from './SocketContext'
 
 export const ChatContext = createContext()
 
@@ -8,12 +9,16 @@ export const ChatProvider = ({ children }) => {
 
     const [chatList, setChatList] = useState([])
     const [selectedChat, setSelectedChat] = useState()
-    const [chatId, setChatId] = useState()
+    const chatId = useRef()
     const [messages, setMessages] = useState([])
     const { userData } = useContext(AuthContext)
+    const { messageEmitter } = useContext(SocketContext)
 
     useEffect(() => {
         getChatList()
+        messageEmitter.current?.on('newMessage',(message)=>{
+            setMessages((prev)=>[...prev,message])
+        })
     }, []);
     
     const getChatList = async () => {
@@ -40,23 +45,11 @@ export const ChatProvider = ({ children }) => {
         const id = res.data._id // get the chat id
         res = await axios.get(import.meta.env.VITE_APP_SERVER+`/api/messages/${id}`)
         setMessages(res.data.messages)
-        setChatId(id) // use this chat id for further interactions
-    }
-
-    const sendMessage = async (content) => {
-        try{
-            const res = await axios.post(import.meta.env.VITE_APP_SERVER + '/api/messages/send',{
-                chatId: chatId,
-                senderId: userData.id,
-                content:content,
-            })
-        }catch(err){
-            console.log('Failed to send message:', err)
-        } 
+        chatId.current = id // use this chat id for further interactions
     }
 
     return (
-        <ChatContext.Provider value={{ chatId, chatList, sendMessage, selectedChat, setSelectedChat, initializeChat, messages }}>
+        <ChatContext.Provider value={{ chatId, chatList, selectedChat, setSelectedChat, initializeChat, messages }}>
             {children}
         </ChatContext.Provider>
     );

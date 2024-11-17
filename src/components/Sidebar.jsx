@@ -7,7 +7,7 @@ import { useNavigate } from 'react-router-dom';
 function Sidebar() {
   const { logout, userData} = useContext(AuthContext)
   const { onlineUsers } = useContext(SocketContext)
-  const {chatList, setSelectedChat} = useContext(ChatContext)
+  const { chatList, setSelectedChat } = useContext(ChatContext)
   const navigate = useNavigate()
 
   const handleLogout = () => {
